@@ -123,9 +123,10 @@ For this step you can use a collinearity test or ray tracing method like Bresenh
 
 I added three functions to the planning_utils file, i chose the collinearity test vs Bresenham: 
  
- 
+ # Define a simple function to add a z coordinate of 
  def point(p):
     return np.array([p[0], p[1], 1.]).reshape(1, -1)
+
 
  def collinearity_check(p1, p2, p3, epsilon=1e-6):   
     m = np.concatenate((p1, p2, p3), 0)
