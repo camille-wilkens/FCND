@@ -102,26 +102,26 @@ This step is to add flexibility to the desired goal location. Should be able to 
 Minimal requirement here is to modify the code in planning_utils() to update the A* implementation to include diagonal motions on the grid that have a cost of sqrt(2), but more creative solutions are welcome. Explain the code you used to accomplish this step.
 
 First I added the diagonal actions in the Action Class:
-    #Diagonal Actions
-    NORTHWEST = (-1,-1, np.sqrt(2))
-    NORTHEAST = (-1, 1, np.sqrt(2))
-    SOUTHWEST = ( 1,-1, np.sqrt(2))
-    SOUTHEAST = ( 1, 1, np.sqrt(2))
+        #Diagonal Actions
+        NORTHWEST = (-1,-1, np.sqrt(2))
+        NORTHEAST = (-1, 1, np.sqrt(2))
+        SOUTHWEST = ( 1,-1, np.sqrt(2))
+        SOUTHEAST = ( 1, 1, np.sqrt(2))
     
  Second I added the following code in the valid_actions function:
-    if (x - 1 < 0 or y - 1 < 0) or grid[x - 1, y - 1] == 1:
-        valid_actions.remove(Action.NORTHWEST)
-    if (x - 1 < 0 or y + 1 > m) or grid[x - 1, y + 1] == 1:
-        valid_actions.remove(Action.NORTHEAST)
-    if (x + 1 > n or y - 1 < 0) or grid[x + 1, y - 1] == 1:
-        valid_actions.remove(Action.SOUTHWEST)
-    if (x + 1> n or y + 1 > m) or grid[x + 1, y + 1] == 1:
-        valid_actions.remove(Action.SOUTHEAST)
+        if (x - 1 < 0 or y - 1 < 0) or grid[x - 1, y - 1] == 1:
+          valid_actions.remove(Action.NORTHWEST)
+        if (x - 1 < 0 or y + 1 > m) or grid[x - 1, y + 1] == 1:
+           valid_actions.remove(Action.NORTHEAST)
+        if (x + 1 > n or y - 1 < 0) or grid[x + 1, y - 1] == 1:
+            valid_actions.remove(Action.SOUTHWEST)
+        if (x + 1> n or y + 1 > m) or grid[x + 1, y + 1] == 1:
+          valid_actions.remove(Action.SOUTHEAST)
 
 #### 6. Cull waypoints 
 For this step you can use a collinearity test or ray tracing method like Bresenham. The idea is simply to prune your path of unnecessary waypoints. Explain the code you used to accomplish this step.
 
-I added three functions to teh planning_utils file: 
+I added three functions to the planning_utils file: 
 
 def point(p):
     return np.array([p[0], p[1], 1.]).reshape(1, -1)
