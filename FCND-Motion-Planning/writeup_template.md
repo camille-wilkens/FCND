@@ -121,7 +121,7 @@ First I added the diagonal actions in the Action Class:
 #### 6. Cull waypoints 
 For this step you can use a collinearity test or ray tracing method like Bresenham. The idea is simply to prune your path of unnecessary waypoints. Explain the code you used to accomplish this step.
 
-I added three functions to the planning_utils file: 
+I added three functions to the planning_utils file, i chose the collinearity test vs Bresenham: 
 
 def point(p):
     return np.array([p[0], p[1], 1.]).reshape(1, -1)
@@ -130,8 +130,6 @@ def collinearity_check(p1, p2, p3, epsilon=1e-6):
     m = np.concatenate((p1, p2, p3), 0)
     det = np.linalg.det(m)
     return abs(det) < epsilon
-    
-I chose to use collinearity test vs Bresenham    
     
 # We're using collinearity here
 def prune_path(path):
