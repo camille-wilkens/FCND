@@ -27,37 +27,56 @@ You're reading it! Below I describe how I addressed each rubric point and where 
 ### Explain the Starter Code
 
 #### 1. Explain the functionality of what's provided in `motion_planning.py` and `planning_utils.py`
-These scripts contain a basic planning implementation that includes...
+These scripts contain a basic planning implementation that includes:
 
-And here's a lovely image of my results (ok this image has nothing to do with it, but it's a nice example of how to include images in your writeup!)
-![Top Down View](./misc/high_up.png)
+The planning_utils file is responsible for:
+  - heuristics
+  - grid representation of a 2D configuration space based on given obstacle data, drone altitude and safety distance
+  - pruning the path   
+  - A* to find a path from start to goal create_grid
 
-Here's | A | Snappy | Table
---- | --- | --- | ---
-1 | `highlight` | **bold** | 7.41
-2 | a | b | c
-3 | *italic* | text | 403
-4 | 2 | 3 | abcd
+The motion_planning file is responsible for:
+  - Drone States (MANUAL, ARMING, TAKEOFF, WAYPOINT, LANDING, DISARMING & PLANNING)
+  - Setting Starting and goal positions in (north, east)
 
 ### Implementing Your Path Planning Algorithm
 
 #### 1. Set your global home position
 Here students should read the first line of the csv file, extract lat0 and lon0 as floating point values and use the self.set_home_position() method to set global home. Explain briefly how you accomplished this in your code.
 
-
-And here is a lovely picture of our downtown San Francisco environment from above!
-![Map of SF](./misc/map.png)
+In the plan_path module in the motion_planning file, 
+       
+       # TODO: read lat0, lon0 from colliders into floating point values
+        filename = 'colliders.csv'
+         
+        f = open(filename)
+        line1 = f.readline()
+        f.close()
+        print (line1)
+        line1 = line1.split(" ")
+        lat0 = np.float(line1[1][:-1])
+        lon0 = np.float(line1[3])            
+        print ("lat0", lat0)
+        print ("lon0", lon0)
+        
+        # Set home position to (lon0, lat0, 0)
+         self.set_home_position(lon0, lat0, 0.0)
 
 #### 2. Set your current local position
 Here as long as you successfully determine your local position relative to global home you'll be all set. Explain briefly how you accomplished this in your code.
 
-
-Meanwhile, here's a picture of me flying through the trees!
-![Forest Flying](./misc/in_the_trees.png)
-
+I utilized the global_to_local function from the udacidrone.frame_utils package
+        
+        # TODO: convert to current local position using global_to_local()
+        current_local_position = global_to_local(self.global_position, self.global_home)
+        
+       
 #### 3. Set grid start position from local position
 This is another step in adding flexibility to the start location. As long as it works you're good to go!
-
+        
+        # TODO: convert to current local position using global_to_local()
+        current_local_position = global_to_local(self.global_position, self.global_home)
+        
 #### 4. Set grid goal position from geodetic coords
 This step is to add flexibility to the desired goal location. Should be able to choose any (lat, lon) within the map and have it rendered to a goal location on the grid.
 
