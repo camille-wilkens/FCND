@@ -51,7 +51,7 @@
 
  - implemented the code in the function `RollPitchControl()`
  
-  `if (collThrustCmd > 0) {
+  ``if (collThrustCmd > 0) {
       float acc = -collThrustCmd / mass;
       float b_x_a = R(0, 2);
       float b_x_c = accelCmd.x / acc;
@@ -66,10 +66,10 @@
       pqrCmd.y = (R(1, 1) * b_x_p_term - R(0, 1) * b_y_p_term) / R(2, 2); 
      } 
      else { 
-     `   pqrCmd.x = 0.0; 
-      `  pqrCmd.y = 0.0; 
+        pqrCmd.x = 0.0; 
+        pqrCmd.y = 0.0; 
      } 
-     pqrCmd.z = 0.0;` 
+    pqrCmd.z = 0.0;``  
 
  - Tuned `kpBank` in `QuadControlParams.txt` to minimize settling time but avoid too much overshoot
     ` kpBank = 8`
