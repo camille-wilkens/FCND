@@ -12,47 +12,34 @@
 
  - implemented the code in the function `GenerateMotorCommands()`
  
-    float len = L / (2.f * sqrtf(2.f));
-
-
-    float p_bar = momentCmd.x / len; // x axis
-    
-    float q_bar = momentCmd.y / len; // y axis 
-    
-    float r_bar = -momentCmd.z / kappa; // z axis
-
-    float c_bar = collThrustCmd;
+   ` float len = L / (2.f * sqrtf(2.f));
+`    float p_bar = momentCmd.x / len; // x axis    
+     float q_bar = momentCmd.y / len; // y axis 
+     float r_bar = -momentCmd.z / kappa; // z axis
+     float c_bar = collThrustCmd;`
 
     // 3D DRONE-FULL-NOTEBOOK (Lesson 4) - Set Propeller Angular Velocities
-
     cmd.desiredThrustsN[0] = (c_bar + p_bar + q_bar + r_bar) / 4.f;  // Front Left
-    
-    cmd.desiredThrustsN[1] = (c_bar - p_bar + q_bar - r_bar) / 4.f; // Front Right 
-    
+    cmd.desiredThrustsN[1] = (c_bar - p_bar + q_bar - r_bar) / 4.f; // Front Right   
     cmd.desiredThrustsN[2] = (c_bar + p_bar - r_bar - q_bar) / 4.f; //Rear left 
-    
-    cmd.desiredThrustsN[3] = (c_bar - p_bar - q_bar + r_bar) / 4.f; //Rear Right  
+    cmd.desiredThrustsN[3] = (c_bar - p_bar - q_bar + r_bar) / 4.f; //Rear Right  `
 
  - implemented the code in the function `BodyRateControl()`
  
-  V3F I;
-
-  I.x = Ixx;
-  
-  I.y = Iyy;
-  
-  I.z = Izz;
-  
-  momentCmd = I * kpPQR * (pqrCmd - pqr);
+  `V3F I;
+   I.x = Ixx;
+   I.y = Iyy;
+   I.z = Izz;
+   momentCmd = I * kpPQR * (pqrCmd - pqr);`
 
  - Tuned `kpPQR` in `QuadControlParams.txt` to get the vehicle to stop spinning quickly but not overshoot
-   kpPQR =43,43, 15
+  ` kpPQR =43,43, 15`
 
 ##2. Implemented roll / pitch control
 
  - implemented the code in the function `RollPitchControl()`
  
-   'if (collThrustCmd > 0) {
+  `if (collThrustCmd > 0) {
       float acc = -collThrustCmd / mass;
       float b_x_a = R(0, 2);
       float b_x_c = accelCmd.x / acc;
@@ -72,10 +59,10 @@
       pqrCmd.x = 0.0;
       pqrCmd.y = 0.0;
   }
-  pqrCmd.z = 0.0;'
+  pqrCmd.z = 0.0;`
 
  - Tuned `kpBank` in `QuadControlParams.txt` to minimize settling time but avoid too much overshoot
-     kpBank = 8
+    ` kpBank = 8`
 
 <p align="center">
 <img src="animations/scenerio2.gif" width="500"/>
