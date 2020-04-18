@@ -159,35 +159,88 @@ Pass:
 
 Pass:
 <p align="center">
-<img src="img/scenario3.gif" width="500"/>
+<img src="img/scenario3.PNG" width="500"/>
 </p>
 
 
-### Non-idealities and robustness (scenario 4) ###
+### Scenerio 4: Non-idealities and robustness  ###
 
-In this part, we will explore some of the non-idealities and robustness of a controller.  For this simulation, we will use `Scenario 4`.  This is a configuration with 3 quads that are all are trying to move one meter forward.  However, this time, these quads are all a bit different:
- - The green quad has its center of mass shifted back
- - The orange vehicle is an ideal quad
- - The red vehicle is heavier than usual
+In this part, we will explore some of the non-idealities and robustness of a controller. 
 
-1. Run your controller & parameter set from Step 3.  Do all the quads seem to be moving OK?  If not, try to tweak the controller parameters to work for all 3 (tip: relax the controller).
+1. Tweaked the controller parameters to work for all 3 (tip: relax the controller) - in `QuadControlParams.txt`
 
-2. Edit `AltitudeControl()` to add basic integral control to help with the different-mass vehicle.
+       # Physical properties
+       Mass = 0.5
+       L = 0.17
+       Ixx = 0.0023
+       Iyy = 0.0023
+       Izz = 0.0046
+       kappa = 0.016
+       minMotorThrust = .1
+       maxMotorThrust = 4.5
 
-3. Tune the integral control, and other control parameters until all the quads successfully move properly.  Your drones' motion should look like this:
+       # Position control gains
+       kpPosXY = 30
+       kpPosZ = 25
+       KiPosZ = 40
+
+       # Velocity control gains
+       kpVelXY = 12.0
+       kpVelZ = 10.0
+
+       # Angle control gains
+       kpBank = 8
+       kpYaw = 2
+
+       # Angle rate gains
+       kpPQR =43,43, 15
+
+       # limits
+       maxAscentRate = 5
+       maxDescentRate = 2
+       maxSpeedXY = 5
+       maxHorizAccel = 12
+       maxTiltAngle = .7
+
+2. Edited `AltitudeControl()` to add basic integral control to help with the different-mass vehicle.
+
+          float z_err = posZCmd - posZ;
+          float z_err_dot = velZCmd - velZ;
+
+          float p_term = kpPosZ * z_err;
+          float d_term = kpVelZ * z_err_dot + velZ;
+
+          //integrator
+          integratedAltitudeError += z_err * dt;
+
+          float u_1_bar = p_term + d_term + (integratedAltitudeError  * KiPosZ) + accelZCmd;
+
+          float y = R(2, 2);
+          float c = (u_1_bar - CONST_GRAVITY) /y;
+
+          thrust = -mass * CONSTRAIN(c, -maxAscentRate / dt, maxAscentRate / dt);
+
+
 
 <p align="center">
-<img src="animations/scenario4.gif" width="500"/>
+<img src="animations/scenerio4.gif" width="500"/>
 </p>
 
+Pass:
+<p align="center">
+<img src="img/scenario4.PNG" width="500"/>
+</p>
 
-### Tracking trajectories ###
+### Scenerio 5: Tracking trajectories ###
+<p align="center">
+<img src="animations/scenerio5.gif" width="500"/>
+</p>
 
-Now that we have all the working parts of a controller, you will put it all together and test it's performance once again on a trajectory.  For this simulation, you will use `Scenario 5`.  This scenario has two quadcopters:
- - the orange one is following `traj/FigureEight.txt`
- - the other one is following `traj/FigureEightFF.txt` - for now this is the same trajectory.  For those interested in seeing how you might be able to improve the performance of your drone by adjusting how the trajectory is defined, check out **Extra Challenge 1** below!
+Pass:
+<p align="center">
+<img src="img/scenario5.PNG" width="500"/>
+</p>
 
-How well is your drone able to follow the trajectory?  It is able to hold to the path fairly well?
 
 
 
