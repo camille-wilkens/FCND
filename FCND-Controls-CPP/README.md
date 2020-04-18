@@ -19,7 +19,7 @@ Pass:
 ### Scenario 2: Body rate and roll/pitch control ###
 
 
-## 1. Implemented body rate control
+ 1. Implemented body rate control
 
  - implemented the code in the function `GenerateMotorCommands()`
  
@@ -48,7 +48,7 @@ Pass:
  
        kpPQR =43,43, 15
 
-##2. Implemented roll / pitch control
+2. Implemented roll / pitch control
 
  - implemented the code in the function `RollPitchControl()`
  
@@ -90,7 +90,7 @@ Pass:
 
 ### Scenario 3: Position/velocity and yaw angle control ###
 
-## 1. Implemented the code in the function `LateralPositionControl()`
+1. Implemented the code in the function `LateralPositionControl()`
 
     if (velCmd.mag() > maxSpeedXY) {
           velCmd = (velCmd.norm() * maxSpeedXY);
@@ -109,7 +109,7 @@ Pass:
 
       }
       
-## 2.  Implemented the code in the function `AltitudeControl()`
+2.  Implemented the code in the function `AltitudeControl()`
       float z_err = posZCmd - posZ;
       float z_err_dot = velZCmd - velZ;
 
@@ -126,15 +126,15 @@ Pass:
 
       thrust = -mass * CONSTRAIN(c, -maxAscentRate / dt, maxAscentRate / dt);
       
-## 4.  Tuned parameters `kpPosZ` and `kiPosZ` in `QuadControlParams.txt`
+3.  Tuned parameters `kpPosZ` and `kiPosZ` in `QuadControlParams.txt`
        kpPosZ = 25
        KiPosZ = 40
 
-## 5.  Tuned parameters `kpVelXY` and `kpVelZ`in `QuadControlParams.txt`
+4.  Tuned parameters `kpVelXY` and `kpVelZ`in `QuadControlParams.txt`
        kpVelXY = 12.0
        kpVelZ = 10.0
 
-## 6.  Implemented the code in the function `YawControl()`
+5.  Implemented the code in the function `YawControl()`
        yawRateCmd = fmodf(yawCmd, 2 * F_PI);
 
        float yaw_Error = yawRateCmd - yaw;
@@ -149,7 +149,7 @@ Pass:
 
        yawRateCmd = yaw_Error * kpYaw;
 
-## 7.  Tuned parameters `kpYaw` and the 3rd (z) component of `kpPQR` in `QuadControlParams.txt`
+6.  Tuned parameters `kpYaw` and the 3rd (z) component of `kpPQR` in `QuadControlParams.txt`
        kpYaw = 2
        kpPQR =43,43, 15
 
