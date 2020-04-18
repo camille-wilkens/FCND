@@ -92,66 +92,71 @@ Pass:
 
 1. Implemented the code in the function `LateralPositionControl()`
 
-    if (velCmd.mag() > maxSpeedXY) {
-          velCmd = (velCmd.norm() * maxSpeedXY);
-      }
+       if (velCmd.mag() > maxSpeedXY) {
+             velCmd = (velCmd.norm() * maxSpeedXY);
+         }
 
-      else { 
-          velCmd = velCmd; 
-      }
+         else { 
+             velCmd = velCmd; 
+         }
 
 
 
-      accelCmd = (kpPosXY * (posCmd - pos) + kpVelXY * (velCmd - vel) + accelCmd);
+         accelCmd = (kpPosXY * (posCmd - pos) + kpVelXY * (velCmd - vel) + accelCmd);
 
-      if (accelCmd.mag() > maxAccelXY) {
-          accelCmd = (accelCmd.norm() * maxAccelXY);
+         if (accelCmd.mag() > maxAccelXY) {
+             accelCmd = (accelCmd.norm() * maxAccelXY);
 
-      }
+         }
       
 2.  Implemented the code in the function `AltitudeControl()`
-      float z_err = posZCmd - posZ;
-      float z_err_dot = velZCmd - velZ;
 
-      float p_term = kpPosZ * z_err;
-      float d_term = kpVelZ * z_err_dot + velZ;
+            float z_err = posZCmd - posZ;
+            float z_err_dot = velZCmd - velZ;
 
-      //integrator
-      integratedAltitudeError += z_err * dt;
+            float p_term = kpPosZ * z_err;
+            float d_term = kpVelZ * z_err_dot + velZ;
 
-      float u_1_bar = p_term + d_term + (integratedAltitudeError * KiPosZ) + accelZCmd;
+            //integrator
+            integratedAltitudeError += z_err * dt;
 
-      float y = R(2, 2);
-      float c = (u_1_bar - CONST_GRAVITY) /y;
+            float u_1_bar = p_term + d_term + (integratedAltitudeError * KiPosZ) + accelZCmd;
 
-      thrust = -mass * CONSTRAIN(c, -maxAscentRate / dt, maxAscentRate / dt);
+            float y = R(2, 2);
+            float c = (u_1_bar - CONST_GRAVITY) /y;
+
+            thrust = -mass * CONSTRAIN(c, -maxAscentRate / dt, maxAscentRate / dt);
       
 3.  Tuned parameters `kpPosZ` and `kiPosZ` in `QuadControlParams.txt`
-       kpPosZ = 25
-       KiPosZ = 40
+
+          kpPosZ = 25
+          KiPosZ = 40
 
 4.  Tuned parameters `kpVelXY` and `kpVelZ`in `QuadControlParams.txt`
-       kpVelXY = 12.0
-       kpVelZ = 10.0
+
+          kpVelXY = 12.0
+          kpVelZ = 10.0
 
 5.  Implemented the code in the function `YawControl()`
-       yawRateCmd = fmodf(yawCmd, 2 * F_PI);
 
-       float yaw_Error = yawRateCmd - yaw;
+        yawRateCmd = fmodf(yawCmd, 2 * F_PI);
 
-       if (yaw_Error > F_PI) {
-           yaw_Error -= 2.0 * F_PI;
-       }
-       if (yaw_Error < -F_PI) {
-           yaw_Error += 2.0 * F_PI;
+        float yaw_Error = yawRateCmd - yaw;
 
-       }
+        if (yaw_Error > F_PI) {
+            yaw_Error -= 2.0 * F_PI;
+        }
+        if (yaw_Error < -F_PI) {
+            yaw_Error += 2.0 * F_PI;
 
-       yawRateCmd = yaw_Error * kpYaw;
+        }
+
+        yawRateCmd = yaw_Error * kpYaw;
 
 6.  Tuned parameters `kpYaw` and the 3rd (z) component of `kpPQR` in `QuadControlParams.txt`
-       kpYaw = 2
-       kpPQR =43,43, 15
+
+        kpYaw = 2
+        kpPQR =43,43, 15
 
 <p align="center">
 <img src="animations/scenerio3.gif" width="500"/>
