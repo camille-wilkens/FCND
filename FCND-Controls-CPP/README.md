@@ -56,22 +56,20 @@
       float b_x_a = R(0, 2);
       float b_x_c = accelCmd.x / acc;
       float b_x_e = b_x_c - b_x_a;
-      float b_x_p_term = kpBank * b_x_e;`
-
-
+      float b_x_p_term = kpBank * b_x_e; 
       float b_y_a = R(1, 2);
       float b_y_c = accelCmd.y / acc;
       float b_y_e = b_y_c - b_y_a;
-      float b_y_p_term = kpBank * b_y_e;`
+      float b_y_p_term = kpBank * b_y_e; 
 
-      pqrCmd.x = (R(1, 0) * b_x_p_term - R(0, 0) * b_y_p_term) / R(2, 2);`
-      pqrCmd.y = (R(1, 1) * b_x_p_term - R(0, 1) * b_y_p_term) / R(2, 2);`
-   ` }`
-   ` else {`
-     `   pqrCmd.x = 0.0;`
-      `  pqrCmd.y = 0.0;`
-    `}`
-    `pqrCmd.z = 0.0;` 
+      pqrCmd.x = (R(1, 0) * b_x_p_term - R(0, 0) * b_y_p_term) / R(2, 2); 
+      pqrCmd.y = (R(1, 1) * b_x_p_term - R(0, 1) * b_y_p_term) / R(2, 2); 
+     } 
+     else { 
+     `   pqrCmd.x = 0.0; 
+      `  pqrCmd.y = 0.0; 
+     } 
+     pqrCmd.z = 0.0;` 
 
  - Tuned `kpBank` in `QuadControlParams.txt` to minimize settling time but avoid too much overshoot
     ` kpBank = 8`
