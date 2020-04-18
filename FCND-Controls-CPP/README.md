@@ -81,19 +81,56 @@ Pass:
 Pass:
 
 <p align="center">
-<img src="img/scenario2.gif" width="500"/>
+<img src="img/scenario2.PNG" width="500"/>
 </p>
 
 
 
-### Position/velocity and yaw angle control (scenario 3) ###
+### Scenario 3: Position/velocity and yaw angle control ###
 
-Next, you will implement the position, altitude and yaw control for your quad.  For the simulation, you will use `Scenario 3`.  This will create 2 identical quads, one offset from its target point (but initialized with yaw = 0) and second offset from target point but yaw = 45 degrees.
+## 1. implementedd the code in the function `LateralPositionControl()`
 
- - implement the code in the function `LateralPositionControl()`
- - implement the code in the function `AltitudeControl()`
- - tune parameters `kpPosZ` and `kpPosZ`
- - tune parameters `kpVelXY` and `kpVelZ`
+    if (velCmd.mag() > maxSpeedXY) {
+          velCmd = (velCmd.norm() * maxSpeedXY);
+      }
+
+      else { 
+          velCmd = velCmd; 
+      }
+
+
+
+      accelCmd = (kpPosXY * (posCmd - pos) + kpVelXY * (velCmd - vel) + accelCmd);
+
+      if (accelCmd.mag() > maxAccelXY) {
+          accelCmd = (accelCmd.norm() * maxAccelXY);
+
+      }
+      
+## 2.  implemented the code in the function `AltitudeControl()`
+      float z_err = posZCmd - posZ;
+      float z_err_dot = velZCmd - velZ;
+
+      float p_term = kpPosZ * z_err;
+      float d_term = kpVelZ * z_err_dot + velZ;
+
+      //integrator
+      integratedAltitudeError += z_err * dt;
+
+      float u_1_bar = p_term + d_term + (integratedAltitudeError * KiPosZ) + accelZCmd;
+
+      float y = R(2, 2);
+      float c = (u_1_bar - CONST_GRAVITY) /y;
+
+      thrust = -mass * CONSTRAIN(c, -maxAscentRate / dt, maxAscentRate / dt);
+      
+## 4.  tuned parameters `kpPosZ` and `kpPosZ` in `QuadControlParams.txt`
+       kpPosZ = 25
+       KiPosZ = 40
+
+## 5.  tune parameters `kpVelXY` and `kpVelZ`in `QuadControlParams.txt`
+       kpVelXY = 12.0
+       kpVelZ = 10.0
 
 If successful, the quads should be going to their destination points and tracking error should be going down (as shown below). However, one quad remains rotated in yaw.
 
@@ -107,6 +144,8 @@ Tune position control for settling time. Don’t try to tune yaw control too tig
 </p>
 
 **Hint:**  For a second order system, such as the one for this quadcopter, the velocity gain (`kpVelXY` and `kpVelZ`) should be at least ~3-4 times greater than the respective position gain (`kpPosXY` and `kpPosZ`).
+
+
 
 ### Non-idealities and robustness (scenario 4) ###
 
