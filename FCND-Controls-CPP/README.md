@@ -4,6 +4,17 @@
 
 - Tuned `Mass` to 0.5 in `QuadControlParams.txt` to get the vehicle to hover in same place
 
+<p align="center">
+<img src="animations/scenerio1.gif" width="500"/>
+</p>
+
+Pass:
+
+<p align="center">
+<img src="img/scenario1.gif" width="500"/>
+</p>
+
+
 
 ### Scenario 2: Body rate and roll/pitch control ###
 
