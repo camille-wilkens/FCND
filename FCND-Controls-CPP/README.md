@@ -8,9 +8,10 @@
 ### Scenario 2: Body rate and roll/pitch control ###
 
 
-1. Implemented body rate control
+## 1. Implemented body rate control
 
  - implemented the code in the function `GenerateMotorCommands()`
+ 
     float len = L / (2.f * sqrtf(2.f));
 
 
@@ -28,23 +29,21 @@
     cmd.desiredThrustsN[3] = (c_bar - p_bar - q_bar + r_bar) / 4.f; //Rear Right  
 
  - implemented the code in the function `BodyRateControl()`
+ 
   V3F I;
 
   I.x = Ixx;
   I.y = Iyy;
   I.z = Izz;
-
-
   momentCmd = I * kpPQR * (pqrCmd - pqr);
 
  - Tuned `kpPQR` in `QuadControlParams.txt` to get the vehicle to stop spinning quickly but not overshoot
-
-  # Angle rate gains
    kpPQR =43,43, 15
 
-2. Implemented roll / pitch control
+##2. Implemented roll / pitch control
 
  - implemented the code in the function `RollPitchControl()`
+ 
 if (collThrustCmd > 0) {
       float acc = -collThrustCmd / mass;
       float b_x_a = R(0, 2);
@@ -68,8 +67,7 @@ if (collThrustCmd > 0) {
   pqrCmd.z = 0.0;
 
  - Tuned `kpBank` in `QuadControlParams.txt` to minimize settling time but avoid too much overshoot
-# Angle control gains
-kpBank = 8
+     kpBank = 8
 
 <p align="center">
 <img src="animations/scenerio2.gif" width="500"/>
