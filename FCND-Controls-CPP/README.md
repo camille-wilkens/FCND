@@ -11,7 +11,7 @@
 Pass:
 
 <p align="center">
-<img src="img/scenario1.gif" width="500"/>
+<img src="img/scenario1.PNG" width="500"/>
 </p>
 
 
