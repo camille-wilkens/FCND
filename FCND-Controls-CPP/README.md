@@ -45,7 +45,8 @@ Pass:
        momentCmd = I * kpPQR * (pqrCmd - pqr); 
 
  - Tuned `kpPQR` in `QuadControlParams.txt` to get the vehicle to stop spinning quickly but not overshoot
-  ` kpPQR =43,43, 15`
+ 
+       kpPQR =43,43, 15
 
 ##2. Implemented roll / pitch control
 
@@ -72,7 +73,8 @@ Pass:
           pqrCmd.z = 0.0;  
 
  - Tuned `kpBank` in `QuadControlParams.txt` to minimize settling time but avoid too much overshoot
-    ` kpBank = 8`
+ 
+       kpBank = 8 
 
 <p align="center">
 <img src="animations/scenerio2.gif" width="500"/>
@@ -88,7 +90,7 @@ Pass:
 
 ### Scenario 3: Position/velocity and yaw angle control ###
 
-## 1. implementedd the code in the function `LateralPositionControl()`
+## 1. Implemented the code in the function `LateralPositionControl()`
 
     if (velCmd.mag() > maxSpeedXY) {
           velCmd = (velCmd.norm() * maxSpeedXY);
@@ -107,7 +109,7 @@ Pass:
 
       }
       
-## 2.  implemented the code in the function `AltitudeControl()`
+## 2.  Implemented the code in the function `AltitudeControl()`
       float z_err = posZCmd - posZ;
       float z_err_dot = velZCmd - velZ;
 
@@ -124,27 +126,41 @@ Pass:
 
       thrust = -mass * CONSTRAIN(c, -maxAscentRate / dt, maxAscentRate / dt);
       
-## 4.  tuned parameters `kpPosZ` and `kpPosZ` in `QuadControlParams.txt`
+## 4.  Tuned parameters `kpPosZ` and `kiPosZ` in `QuadControlParams.txt`
        kpPosZ = 25
        KiPosZ = 40
 
-## 5.  tune parameters `kpVelXY` and `kpVelZ`in `QuadControlParams.txt`
+## 5.  Tuned parameters `kpVelXY` and `kpVelZ`in `QuadControlParams.txt`
        kpVelXY = 12.0
        kpVelZ = 10.0
 
-If successful, the quads should be going to their destination points and tracking error should be going down (as shown below). However, one quad remains rotated in yaw.
+## 6.  Implemented the code in the function `YawControl()`
+       yawRateCmd = fmodf(yawCmd, 2 * F_PI);
 
- - implement the code in the function `YawControl()`
- - tune parameters `kpYaw` and the 3rd (z) component of `kpPQR`
+       float yaw_Error = yawRateCmd - yaw;
 
-Tune position control for settling time. Don’t try to tune yaw control too tightly, as yaw control requires a lot of control authority from a quadcopter and can really affect other degrees of freedom.  This is why you often see quadcopters with tilted motors, better yaw authority!
+       if (yaw_Error > F_PI) {
+           yaw_Error -= 2.0 * F_PI;
+       }
+       if (yaw_Error < -F_PI) {
+           yaw_Error += 2.0 * F_PI;
+
+       }
+
+       yawRateCmd = yaw_Error * kpYaw;
+
+## 7.  Tuned parameters `kpYaw` and the 3rd (z) component of `kpPQR` in `QuadControlParams.txt`
+       kpYaw = 2
+       kpPQR =43,43, 15
 
 <p align="center">
-<img src="animations/scenario3.gif" width="500"/>
+<img src="animations/scenerio3.gif" width="500"/>
 </p>
 
-**Hint:**  For a second order system, such as the one for this quadcopter, the velocity gain (`kpVelXY` and `kpVelZ`) should be at least ~3-4 times greater than the respective position gain (`kpPosXY` and `kpPosZ`).
-
+Pass:
+<p align="center">
+<img src="img/scenario3.gif" width="500"/>
+</p>
 
 
 ### Non-idealities and robustness (scenario 4) ###
@@ -174,38 +190,6 @@ Now that we have all the working parts of a controller, you will put it all toge
 How well is your drone able to follow the trajectory?  It is able to hold to the path fairly well?
 
 
-### Extra Challenge 1 (Optional) ###
-
-You will notice that initially these two trajectories are the same. Let's work on improving some performance of the trajectory itself.
-
-1. Inspect the python script `traj/MakePeriodicTrajectory.py`.  Can you figure out a way to generate a trajectory that has velocity (not just position) information?
-
-2. Generate a new `FigureEightFF.txt` that has velocity terms
-Did the velocity-specified trajectory make a difference? Why?
-
-With the two different trajectories, your drones' motions should look like this:
-
-<p align="center">
-<img src="animations/scenario5.gif" width="500"/>
-</p>
-
-
-### Extra Challenge 2 (Optional) ###
-
-For flying a trajectory, is there a way to provide even more information for even better tracking?
-
-How about trying to fly this trajectory as quickly as possible (but within following threshold)!
-
-
-## Evaluation ##
-
-To assist with tuning of your controller, the simulator contains real time performance evaluation.  We have defined a set of performance metrics for each of the scenarios that your controllers must meet for a successful submission.
-
-There are two ways to view the output of the evaluation:
-
- - in the command line, at the end of each simulation loop, a **PASS** or a **FAIL** for each metric being evaluated in that simulation
- - on the plots, once your quad meets the metrics, you will see a green box appear on the plot notifying you of a **PASS**
-
 
 ### Performance Metrics ###
 
@@ -226,6 +210,4 @@ The specific performance metrics are as follows:
  - scenario 5
    - position error of the quad should be less than 0.25 meters for at least 3 seconds
 
-## Authors ##
 
-Thanks to Fotokite for the initial development of the project code and simulator.
