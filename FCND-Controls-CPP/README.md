@@ -16,7 +16,9 @@
 
 
     float p_bar = momentCmd.x / len; // x axis
+    
     float q_bar = momentCmd.y / len; // y axis 
+    
     float r_bar = -momentCmd.z / kappa; // z axis
 
     float c_bar = collThrustCmd;
@@ -24,8 +26,11 @@
     // 3D DRONE-FULL-NOTEBOOK (Lesson 4) - Set Propeller Angular Velocities
 
     cmd.desiredThrustsN[0] = (c_bar + p_bar + q_bar + r_bar) / 4.f;  // Front Left
+    
     cmd.desiredThrustsN[1] = (c_bar - p_bar + q_bar - r_bar) / 4.f; // Front Right 
+    
     cmd.desiredThrustsN[2] = (c_bar + p_bar - r_bar - q_bar) / 4.f; //Rear left 
+    
     cmd.desiredThrustsN[3] = (c_bar - p_bar - q_bar + r_bar) / 4.f; //Rear Right  
 
  - implemented the code in the function `BodyRateControl()`
@@ -33,8 +38,11 @@
   V3F I;
 
   I.x = Ixx;
+  
   I.y = Iyy;
+  
   I.z = Izz;
+  
   momentCmd = I * kpPQR * (pqrCmd - pqr);
 
  - Tuned `kpPQR` in `QuadControlParams.txt` to get the vehicle to stop spinning quickly but not overshoot
