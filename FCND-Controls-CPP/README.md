@@ -7,31 +7,80 @@
 
 ### Scenario 2: Body rate and roll/pitch control ###
 
-First, you will implement the body rate and roll / pitch control.  For the simulation, you will use `Scenario 2`.  In this scenario, you will see a quad above the origin.  It is created with a small initial rotation speed about its roll axis.  Your controller will need to stabilize the rotational motion and bring the vehicle back to level attitude.
 
-To accomplish this, you will:
+1. Implemented body rate control
 
-1. Implement body rate control
+ - implemented the code in the function `GenerateMotorCommands()`
+    float len = L / (2.f * sqrtf(2.f));
 
- - implement the code in the function `GenerateMotorCommands()`
- - implement the code in the function `BodyRateControl()`
- - Tune `kpPQR` in `QuadControlParams.txt` to get the vehicle to stop spinning quickly but not overshoot
 
-If successful, you should see the rotation of the vehicle about roll (omega.x) get controlled to 0 while other rates remain zero.  Note that the vehicle will keep flying off quite quickly, since the angle is not yet being controlled back to 0.  Also note that some overshoot will happen due to motor dynamics!.
+    float p_bar = momentCmd.x / len; // x axis
+    float q_bar = momentCmd.y / len; // y axis 
+    float r_bar = -momentCmd.z / kappa; // z axis
 
-If you come back to this step after the next step, you can try tuning just the body rate omega (without the outside angle controller) by setting `QuadControlParams.kpBank = 0`.
+    float c_bar = collThrustCmd;
 
-2. Implement roll / pitch control
-We won't be worrying about yaw just yet.
+    // 3D DRONE-FULL-NOTEBOOK (Lesson 4) - Set Propeller Angular Velocities
 
- - implement the code in the function `RollPitchControl()`
- - Tune `kpBank` in `QuadControlParams.txt` to minimize settling time but avoid too much overshoot
+    cmd.desiredThrustsN[0] = (c_bar + p_bar + q_bar + r_bar) / 4.f;  // Front Left
+    cmd.desiredThrustsN[1] = (c_bar - p_bar + q_bar - r_bar) / 4.f; // Front Right 
+    cmd.desiredThrustsN[2] = (c_bar + p_bar - r_bar - q_bar) / 4.f; //Rear left 
+    cmd.desiredThrustsN[3] = (c_bar - p_bar - q_bar + r_bar) / 4.f; //Rear Right  
 
-If successful you should now see the quad level itself (as shown below), though it’ll still be flying away slowly since we’re not controlling velocity/position!  You should also see the vehicle angle (Roll) get controlled to 0.
+ - implemented the code in the function `BodyRateControl()`
+  V3F I;
+
+  I.x = Ixx;
+  I.y = Iyy;
+  I.z = Izz;
+
+
+  momentCmd = I * kpPQR * (pqrCmd - pqr);
+
+ - Tuned `kpPQR` in `QuadControlParams.txt` to get the vehicle to stop spinning quickly but not overshoot
+
+  # Angle rate gains
+   kpPQR =43,43, 15
+
+2. Implemented roll / pitch control
+
+ - implemented the code in the function `RollPitchControl()`
+if (collThrustCmd > 0) {
+      float acc = -collThrustCmd / mass;
+      float b_x_a = R(0, 2);
+      float b_x_c = accelCmd.x / acc;
+      float b_x_e = b_x_c - b_x_a;
+      float b_x_p_term = kpBank * b_x_e;
+
+
+      float b_y_a = R(1, 2);
+      float b_y_c = accelCmd.y / acc;
+      float b_y_e = b_y_c - b_y_a;
+      float b_y_p_term = kpBank * b_y_e;
+
+      pqrCmd.x = (R(1, 0) * b_x_p_term - R(0, 0) * b_y_p_term) / R(2, 2);
+      pqrCmd.y = (R(1, 1) * b_x_p_term - R(0, 1) * b_y_p_term) / R(2, 2);
+  }
+  else {
+      pqrCmd.x = 0.0;
+      pqrCmd.y = 0.0;
+  }
+  pqrCmd.z = 0.0;
+
+ - Tuned `kpBank` in `QuadControlParams.txt` to minimize settling time but avoid too much overshoot
+# Angle control gains
+kpBank = 8
 
 <p align="center">
 <img src="animations/scenerio2.gif" width="500"/>
 </p>
+
+Pass:
+
+<p align="center">
+<img src="img/scenario2.gif" width="500"/>
+</p>
+
 
 
 ### Position/velocity and yaw angle control (scenario 3) ###
