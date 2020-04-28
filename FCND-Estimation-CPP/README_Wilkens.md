@@ -36,22 +36,34 @@ For the controls project, the simulator was working with a perfect set of sensor
 
 ### Step 2: Attitude Estimation ###
 
-Now let's look at the first step to our state estimation: including information from our IMU.  In this step, you will be improving the complementary filter-type attitude filter with a better rate gyro attitude integration scheme.
+Now let's look at the first step to our state estimation: including information from our IMU.  In this step, I will be improving the complementary filter-type attitude filter with a better rate gyro attitude integration scheme.
 
-1. Run scenario `07_AttitudeEstimation`.  For this simulation, the only sensor used is the IMU and noise levels are set to 0 (see `config/07_AttitudeEstimation.txt` for all the settings for this simulation).  There are two plots visible in this simulation.
+1. I ran the scenario `07_AttitudeEstimation`.  For this simulation, the only sensor used is the IMU and noise levels are set to 0 (see `config/07_AttitudeEstimation.txt` for all the settings for this simulation).  There are two plots visible in this simulation.
    - The top graph is showing errors in each of the estimated Euler angles.
    - The bottom shows the true Euler angles and the estimates.
 Observe that there’s quite a bit of error in attitude estimation.
 
-2. In `QuadEstimatorEKF.cpp`, you will see the function `UpdateFromIMU()` contains a complementary filter-type attitude filter.  To reduce the errors in the estimated attitude (Euler Angles), implement a better rate gyro attitude integration scheme.  You should be able to reduce the attitude errors to get within 0.1 rad for each of the Euler angles, as shown in the screenshot below.
+2. In `QuadEstimatorEKF.cpp`, you will see the function `UpdateFromIMU()` contains a complementary filter-type attitude filter.  To reduce the errors in the estimated attitude (Euler Angles), implement a better rate gyro attitude integration scheme - see below. 
 
-![attitude example](images/attitude-screenshot.png)
+       Quaternion<float> quat = Quaternion<float>::FromEuler123_RPY(rollEst, pitchEst, ekfState(6));
 
-In the screenshot above the attitude estimation using linear scheme (left) and using the improved nonlinear scheme (right). Note that Y axis on error is much greater on left.
-images/scenario06.png)
+       quat.IntegrateBodyRate(gyro, dtIMU);
+
+       float predictedPitch = quat.Pitch();
+       float predictedRoll = quat.Roll();
+       ekfState(6) = quat.Yaw();
+
+       // normalize yaw to -pi .. pi
+
+       if (ekfState(6) > F_PI) ekfState(6) -= 2.f * F_PI;
+       if (ekfState(6) < -F_PI) ekfState(6) += 2.f * F_PI;
+       
+       
+       
+![Pass](images/scenario07.gif)
 ***Success criteria:*** *Your attitude estimator needs to get within 0.1 rad for each of the Euler angles for at least 3 seconds.*
+![Pass](images/scenario7.gif)
 
-**Hint: see section 7.1.2 of [Estimation for Quadrotors](https://www.overleaf.com/read/vymfngphcccj) for a refresher on a good non-linear complimentary filter for attitude using quaternions.**
 
 
 ### Step 3: Prediction Step ###
