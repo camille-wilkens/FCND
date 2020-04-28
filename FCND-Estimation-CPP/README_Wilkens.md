@@ -135,9 +135,9 @@ I also implemented the rest of the prediction step (predict the state covariance
 
 Up until now I've only used the accelerometer and gyro for our state estimation.  In this step, I will be adding the information from the magnetometer to improve the filter's performance in estimating the vehicle's heading.
 
-1. I ran scenario `10_MagUpdate`.  This scenario uses a realistic IMU, but the magnetometer update hasn’t been implemented yet. As a result, you will notice that the estimate yaw is drifting away from the real value (and the estimated standard deviation is also increasing).  Note that in this case the plot is showing you the estimated yaw error (`quad.est.e.yaw`), which is drifting away from zero as the simulation runs.  You should also see the estimated standard deviation of that state (white boundary) is also increasing.
+1. I ran the scenario `10_MagUpdate`.  This scenario uses a realistic IMU, but the magnetometer update hasn’t been implemented yet. As a result, you will notice that the estimate yaw is drifting away from the real value (and the estimated standard deviation is also increasing).  Note that in this case the plot is showing you the estimated yaw error (`quad.est.e.yaw`), which is drifting away from zero as the simulation runs.  You should also see the estimated standard deviation of that state (white boundary) is also increasing.
 
-2. I tune the parameter `QYawStd` (`QuadEstimatorEKF.txt`) for the QuadEstimatorEKF so that it approximately captures the magnitude of the drift.
+2. I tuned the parameter `QYawStd` (`QuadEstimatorEKF.txt`) for the QuadEstimatorEKF so that it approximately captures the magnitude of the drift.
 
        QYawStd = .23
  
@@ -167,9 +167,9 @@ Up until now I've only used the accelerometer and gyro for our state estimation.
 
 ### Step 5: Closed Loop + GPS Update ###
 
-1. Run scenario `11_GPSUpdate`.  At the moment this scenario is using both an ideal estimator and and ideal IMU.  Even with these ideal elements, watch the position and velocity errors (bottom right). As you see they are drifting away, since GPS update is not yet implemented.
+1. I ran the scenario `11_GPSUpdate`.  At the moment this scenario is using both an ideal estimator and and ideal IMU.  Even with these ideal elements, watch the position and velocity errors (bottom right). As you see they are drifting away, since GPS update is not yet implemented.
 
-2. Let's change to using your estimator by setting `Quad.UseIdealEstimator` to 0 in `config/11_GPSUpdate.txt`.  Rerun the scenario to get an idea of how well your estimator work with an ideal IMU.
+2. Let's change to using my estimator by setting `Quad.UseIdealEstimator` to 0 in `config/11_GPSUpdate.txt`.  I reran the scenario to get an idea of how well my estimator will work with an ideal IMU.
 
 3. Now repeat with realistic IMU by commenting out these lines in `config/11_GPSUpdate.txt`:
 ```
@@ -177,7 +177,7 @@ Up until now I've only used the accelerometer and gyro for our state estimation.
 #SimIMU.GyroStd = 0,0,0
 ```
 
-4. Tune the process noise model in `QuadEstimatorEKF.txt` to try to approximately capture the error you see with the estimated uncertainty (standard deviation) of the filter.
+4. I tuned the process noise model in `QuadEstimatorEKF.txt` to try to approximately capture the error you see with the estimated uncertainty (standard deviation) of the filter.
 
 5. Implement the EKF GPS Update in the function `UpdateFromGPS()`.
 
